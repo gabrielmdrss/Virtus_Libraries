@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "inc/joystick.h"
+#include "examples.h"
 
 
 
@@ -12,13 +12,10 @@ int main()
     Joystick_Init();
 
     while (1) {
-        Joystick_Read(&joystick);
-        Joystick_ApplyFilters(&joystick);
 
-        printf("Bruto: X=%d, Y=%d | Filtrado: X=%d, Y=%d\n",
-            joystick.x_raw, joystick.y_raw,
-            joystick.x_filtered, joystick.y_filtered);
-        sleep_ms(50);
+        //Test_joystick_Complete(&joystick);
+        //Test_joystick_DeadZone(&joystick);
+        Test_joystick_LowpassFilter(&joystick);
     }
 
     return 0;
