@@ -13,9 +13,9 @@ int main()
 
     while (1) {
 
-        //Test_joystick_Complete(&joystick);
+        Test_joystick_Complete(&joystick);
         //Test_joystick_DeadZone(&joystick);
-        Test_joystick_LowpassFilter(&joystick);
+        //Test_joystick_LowpassFilter(&joystick);
     }
 
     return 0;

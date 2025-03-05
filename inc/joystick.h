@@ -1,13 +1,11 @@
 /******************************************************************************
  * @file    JOYSTICK.H
- * @brief   Header file containing definitions and constants for joystick usage.
+ * @brief   Header providing general constants, a structure for joystick data,
+ *          and function prototypes for handling joystick operations.
  *
- * @authors Gabriel Domingos de Medeiros, Jezreal Pereira Filgueiras
- * @date    March 2025
- * @version 1.0.0
- *
- * @note    This file includes the necessary definitions and constants
- *          for the joystick module visualization and filtering.
+ * @note    This file contains a set of values, a data structure to store raw
+ *          and processed readings, and functions for initializing, reading,
+ *          and filtering joystick data in various ways.
  *
  *****************************************************************************/
 
