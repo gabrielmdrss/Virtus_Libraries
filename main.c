@@ -18,7 +18,7 @@ int main()
         //Test_joystick_LowpassFilter(&joystick);
 
     // --------------------- Testes do LedMatrix --------------------- //
-        ledDeslizante();
+        walkingLed();
     }
 
     return 0;

@@ -75,17 +75,15 @@ void Test_joystick_LowpassFilter(JoystickState *js) {
 
 /**************************** LED Matrix Examples ****************************/
 
-// Função principal para criar o efeito de LED deslizante.
-void ledDeslizante() {
+/* Main function to create a sliding LED effect. */
+void walkingLed() {
 
     NeoPixel_Clear();
 
-    for (int coluna = 0; coluna < 5; coluna++) {
-        for (int linha = 0; linha < 5; linha++) {
+    for (int column = 0; column < 5; column++) {
+        for (int row = 0; row < 5; row++) {
             
-            
-            /*********** Limpa a matriz ***********/
-
+            /*********** Clears the matrix ***********/
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5; j++) {
                     matriz[i][j][0] = 0;
@@ -93,24 +91,23 @@ void ledDeslizante() {
                     matriz[i][j][2] = 0;
                 }
             }
+            /******************************************/
 
-            /**************************************/
+            // Lights up the LED at the current position
+            matriz[row][column][0] = 0;
+            matriz[row][column][1] = 200;
+            matriz[row][column][2] = 0;
 
-            // Acende o LED na posição atual
-            matriz[linha][coluna][0] = 0;
-            matriz[linha][coluna][1] = 200;
-            matriz[linha][coluna][2] = 0;
-
-            // Desenha a matriz
+            // Draws the matrix
             for (int i = 0; i < 5; i++) {
                 for (int j = 0; j < 5; j++) {
-                    int posicao = NeoPixel_GetIndex(i, j);
-                    NeoPixel_SetLED(posicao, matriz[i][j][0], matriz[i][j][1], matriz[i][j][2]);
+                    int position = NeoPixel_GetIndex(i, j);
+                    NeoPixel_SetLED(position, matriz[i][j][0], matriz[i][j][1], matriz[i][j][2]);
                 }
             }
 
             NeoPixel_Write();
-            sleep_ms(50); // Espera 200ms antes de acender o próximo LED
+            sleep_ms(50); // Waits 50ms before lighting the next LED
         }
     }
 }
