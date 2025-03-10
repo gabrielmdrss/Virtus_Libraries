@@ -37,7 +37,7 @@ pico_sdk_init()
 
 add_executable(libraries 
         joystick.c
-        ledMatrix.c
+        ws2812.c
         main.c
         )
 
@@ -47,9 +47,6 @@ pico_set_program_version(libraries "0.1")
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(libraries 0)
 pico_enable_stdio_usb(libraries 1)
-
-# Generate PIO header
-pico_generate_pio_header(libraries ${CMAKE_CURRENT_LIST_DIR}//ws2818b.pio)
 
 # Add the standard library to the build
 target_link_libraries(libraries

@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "inc/joystick.h"
-#include "inc/ledMatrix.h"
+#include "inc/ws2812.h"
 
 /***************************** Joystick Examples *****************************/
 
@@ -75,42 +75,6 @@ void Test_joystick_LowpassFilter(JoystickState *js) {
 
 /**************************** LED Matrix Examples ****************************/
 
-/* Main function to create a sliding LED effect. */
-void walkingLed() {
-
-    NeoPixel_Clear();
-
-    for (int column = 0; column < 5; column++) {
-        for (int row = 0; row < 5; row++) {
-            
-            /*********** Clears the matrix ***********/
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 5; j++) {
-                    matriz[i][j][0] = 0;
-                    matriz[i][j][1] = 0;
-                    matriz[i][j][2] = 0;
-                }
-            }
-            /******************************************/
-
-            // Lights up the LED at the current position
-            matriz[row][column][0] = 0;
-            matriz[row][column][1] = 200;
-            matriz[row][column][2] = 0;
-
-            // Draws the matrix
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 5; j++) {
-                    int position = NeoPixel_GetIndex(i, j);
-                    NeoPixel_SetLED(position, matriz[i][j][0], matriz[i][j][1], matriz[i][j][2]);
-                }
-            }
-
-            NeoPixel_Write();
-            sleep_ms(50); // Waits 50ms before lighting the next LED
-        }
-    }
-}
 
 /*************************** Push-Buttons Examples ***************************/
 
