@@ -52,6 +52,7 @@ pico_enable_stdio_usb(libraries 1)
 target_link_libraries(libraries
         pico_stdlib
         hardware_pio
+        hardware_clocks
         )
 
 # Add the standard include files to the build
@@ -65,6 +66,8 @@ target_link_libraries(libraries
         hardware_pio
         hardware_clocks        
         )
+
+pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/ws2818b.pio)
 
 pico_add_extra_outputs(libraries)
 

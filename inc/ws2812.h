@@ -38,6 +38,9 @@
 #define _WS2812_H
 
 #include "pico/stdlib.h"
+#include "ws2818b.pio.h"
+#include "hardware/clocks.h"
+#include "hardware/pio.h"
 
 /** 
  * @brief Defines ws2812 LED config value.
@@ -56,6 +59,20 @@ typedef struct {
 } ws2812_config_t;
 
 /**
+ * @brief Enumeration for LED intensity levels.
+ *
+ * This enumeration defines the intensity levels for controlling the brightness
+ * of WS2812 LEDs.
+ */
+typedef enum {
+    LED_OFF = 0,        // Desligado
+    LED_WEAK = 4,       // Fraco
+    LED_MEDIUM = 2,     // Intermediário
+    LED_STRONG = 1,     // Forte
+    LED_MAX = 3         // Muito forte
+} led_intensity_t;
+
+/**
  * @brief External declaration of WS2812 LED configuration.
  *
  * This declares an external variable `ws2812_config` of type `ws2812_config_t`,
@@ -64,6 +81,9 @@ typedef struct {
  * source file.
  */
 extern ws2812_config_t ws2812_config;
+
+extern PIO pio_ws;
+extern uint sm_ws;
 
 /**
  * @brief Initializes WS2812 LED control.
@@ -92,11 +112,11 @@ void ws2812_init(ws2812_config_t *ws2812_config);
 void ws2812_set_pixel(ws2812_config_t *ws2812_config, uint32_t set_color);
 
 // Define a mesma cor para todos os LEDs da matriz, recebendo R, G e B separadamente.
-void ws2812_set_all(ws2812_config_t *ws2812_config, uint8_t red, uint8_t green, uint8_t blue);
+void ws2812_set_all(ws2812_config_t *ws2812_config, led_intensity_t red, led_intensity_t green, led_intensity_t blue);
 
 // Define a cor de um LED específico (posição x,y onde x e y variam de 0 a 4)
 // recebendo os valores de R, G e B separadamente.
-void ws2812_set_pixel_xy(ws2812_config_t *ws2812_config, int x, int y, int red, int green, int blue);
+void ws2812_set_pixel_xy(ws2812_config_t *ws2812_config, int x, int y, led_intensity_t red, led_intensity_t green, led_intensity_t blue);
 
 // Envia os dados de toda a matriz para os LEDs.
 void ws2812_show(ws2812_config_t *ws2812_config);
@@ -105,6 +125,6 @@ void ws2812_show(ws2812_config_t *ws2812_config);
 static int clamp(int val, int min, int max);
 
 // Função auxiliar para montar a cor no formato 0xGRB, com tratamento para valores fora do intervalo [0,255].
-static uint32_t build_color(int red, int green, int blue);
+static uint32_t build_color(led_intensity_t red, led_intensity_t green, led_intensity_t blue);
 
 #endif /* _WS2812_H */

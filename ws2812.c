@@ -39,6 +39,9 @@
 // Declaração global para armazenar as cores dos 25 LEDs (5x5)
 static uint32_t led_matrix[25] = {0};
 
+PIO pio_ws = pio0;       // Aqui sim inicializa
+uint sm_ws = 0;          // E aqui também
+
 ws2812_config_t ws2812_config = {
     .pin = WS2812
 };
@@ -53,90 +56,64 @@ static int clamp(int val, int min, int max) {
 // Função auxiliar para montar a cor em formato 0xG R B, 
 // onde os LEDs esperam os dados em ordem GRB.
 // Trata valores acima de 255, limitando-os.
-static uint32_t build_color(int red, int green, int blue) {
-    red   = clamp(red,   0, 255);
-    green = clamp(green, 0, 255);
-    blue  = clamp(blue,  0, 255);
-    // Ordem GRB: byte mais significativo = Green, seguido por Red e Blue.
+static uint32_t build_color(led_intensity_t red, led_intensity_t green, led_intensity_t blue) {
+    // Ordem GRB: o byte mais significativo é o verde
     return ((uint32_t)green << 16) | ((uint32_t)red << 8) | ((uint32_t)blue);
 }
 
+
 void ws2812_init(ws2812_config_t *ws2812_config) {
-    gpio_init(ws2812_config->pin);
-    gpio_set_dir(ws2812_config->pin, 1);
+    // Carrega e configura programa PIO (ws2818b_program vem de ws2818b.pio.h)
+    uint offset = pio_add_program(pio_ws, &ws2818b_program);
+    sm_ws = pio_claim_unused_sm(pio_ws, true);
+    ws2818b_program_init(pio_ws, sm_ws, offset, ws2812_config->pin, 800000.f);
 
-    // Reset: Força o pino em nível baixo por tempo suficiente (>50µs)
-    gpio_put(ws2812_config->pin, 0);
-    sleep_us(300);  // 300µs para garantir
-
-    // Inicializa a matriz com todos os LEDs apagados
+    // Limpa o array e envia zeros
     for (int i = 0; i < 25; i++) {
-        led_matrix[i] = build_color(0, 0, 0);
+        led_matrix[i] = 0;
     }
-    
-    // Envia os dados zerados IMEDIATAMENTE após o reset
     ws2812_show(ws2812_config);
-    sleep_us(500); // Garante tempo para processamento
 }
 
+// Agora, em vez de bit-banging, set_pixel apenas gravará no buffer
+// se você quiser realmente controlar um LED isolado (opcional).
 void ws2812_set_pixel(ws2812_config_t *ws2812_config, uint32_t color) {
-    // Envia os 24 bits iniciando pelo bit mais significativo (MSB)
-    for (int bit = 23; bit >= 0; bit--) {
-        if (color & (1 << bit)) {
-            // Envia um "1"
-            for (volatile int i = 0; i <= 10; i++) {
-                gpio_put(ws2812_config->pin, 1);
-            }
-            for (volatile int i = 0; i <= 2; i++) {
-                gpio_put(ws2812_config->pin, 0);
-            }
-        } else {
-            // Envia um "0"
-            for (volatile int i = 0; i <= 3; i++) {
-                gpio_put(ws2812_config->pin, 1);
-            }
-            for (volatile int i = 0; i <= 10; i++) {
-                gpio_put(ws2812_config->pin, 0);
-            }
-        }
-    }
+    led_matrix[0] = color; // Exemplo: trocar apenas o índice 0
 }
 
-// Define a mesma cor para todos os LEDs da matriz, recebendo vermelho, verde e azul separadamente.
-void ws2812_set_all(ws2812_config_t *ws2812_config, uint8_t red, uint8_t green, uint8_t blue) {
+// Define a mesma cor para todos os LEDs (sem loops de GPIO).
+void ws2812_set_all(ws2812_config_t *ws2812_config, led_intensity_t red, led_intensity_t green, led_intensity_t blue) {
     uint32_t color = build_color(red, green, blue);
     for (int i = 0; i < 25; i++) {
         led_matrix[i] = color;
     }
 }
 
-// Define a cor de um LED específico na posição (x,y) com os valores vermelho, verde e azul.
-// Os valores de x e y serão limitados para o intervalo [0, 4].
-void ws2812_set_pixel_xy(ws2812_config_t *ws2812_config, int x, int y, int red, int green, int blue) {
-    // Limita x e y para o intervalo [0,4]
+// Ajusta um LED específico (x,y) no buffer, respeitando o snake wiring.
+void ws2812_set_pixel_xy(ws2812_config_t *ws2812_config, int x, int y, led_intensity_t red, led_intensity_t green, led_intensity_t blue) {
+    // Limita x e y no intervalo [0,4]
     x = clamp(x, 0, 4);
     y = clamp(y, 0, 4);
-    
     int index;
-    // Mapeamento para snake wiring considerando:
-    // - As fileiras são consideradas a partir do fundo (y = 0) para o topo (y = 4).
-    // - Para fileiras pares (y par): 
-    //     o LED inferior esquerdo (x=0) deve mapear para o último da fileira, 
-    //     ou seja, índice = y*5 + (4 - x).
-    // - Para fileiras ímpares (y ímpar):
-    //     a numeração é direta: índice = y*5 + x.
     if (y % 2 == 0) {
         index = y * 5 + (4 - x);
     } else {
         index = y * 5 + x;
     }
-    
     led_matrix[index] = build_color(red, green, blue);
 }
 
-// Envia os dados de toda a matriz para os LEDs.
+// Envia o buffer usando o FIFO da PIO, em formato GRB.
 void ws2812_show(ws2812_config_t *ws2812_config) {
     for (int i = 0; i < 25; i++) {
-        ws2812_set_pixel(ws2812_config, led_matrix[i]);
+        uint32_t c = led_matrix[i];
+        uint8_t g = (c >> 16) & 0xFF;
+        uint8_t r = (c >>  8) & 0xFF;
+        uint8_t b =  c        & 0xFF;
+        pio_sm_put_blocking(pio_ws, sm_ws, g);
+        pio_sm_put_blocking(pio_ws, sm_ws, r);
+        pio_sm_put_blocking(pio_ws, sm_ws, b);
     }
+    // Pequeno atraso pós-transmissão
+    sleep_us(300);
 }
