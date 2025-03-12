@@ -1,13 +1,15 @@
 /******************************************************************************
- * @file    JOYSTICK.H
+ * @file    joystick.h
  * @brief   Header providing general constants, a structure for joystick data,
  *          and function prototypes for handling joystick operations.
+ * @authors 
+ * @date    March 2025
+ * @version 1.0.0
  *
  * @note    This file contains a set of values, a data structure to store raw
  *          and processed readings, and functions for initializing, reading,
  *          and filtering joystick data in various ways.
- *
- *****************************************************************************/
+ ******************************************************************************/
 
 #ifndef JOYSTICK_H
 #define JOYSTICK_H

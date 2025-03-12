@@ -1,15 +1,17 @@
 /******************************************************************************
- * @file    LEDMATRIX.H
+ * @file    ledMatrix.h
  * @brief   Header providing general constants, a structure for Led Matrix w281812
- *           data, and function prototypes for handling joystick operations.
+ *          data, and function prototypes for handling joystick operations.
+ * @authors 
+ * @date    March 2025
+ * @version 1.0.0
  *
  * @note    This header file provides the function prototypes for initializing the
  *          Led Matrix, setting the color of a pixel, setting the color of all
  *          pixels, and setting the color of a specific quadrant.
- *
- *****************************************************************************/
+ ******************************************************************************/
 
-#ifndef LEDMATRIX_H
+ #ifndef LEDMATRIX_H
 #define LEDMATRIX_H
 
 #include "pico/stdlib.h"
