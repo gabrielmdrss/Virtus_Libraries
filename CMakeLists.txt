@@ -37,7 +37,7 @@ pico_sdk_init()
 
 add_executable(libraries 
         joystick.c
-        ws2812.c
+        ledMatrix.c
         main.c
         )
 
