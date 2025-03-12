@@ -11,7 +11,7 @@
  *          pixels, and setting the color of a specific quadrant.
  ******************************************************************************/
 
- #ifndef LEDMATRIX_H
+#ifndef LEDMATRIX_H
 #define LEDMATRIX_H
 
 #include "pico/stdlib.h"

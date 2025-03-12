@@ -36,9 +36,9 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(libraries 
-        joystick.c
-        ledMatrix.c
-        main.c
+        src/joystick.c
+        src/ledMatrix.c
+        src/main.c
         )
 
 pico_set_program_name(libraries "libraries")
