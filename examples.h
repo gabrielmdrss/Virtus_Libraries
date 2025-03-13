@@ -207,11 +207,6 @@ void Test_joystick_LedMatrixControl(JoystickState *js) {
         sleep_ms(200);       // Debounce
     }
 
-    // Print current info
-    printf("x=%d, y=%d\r\n", x, y);
-    printf("filtered x=%d, y=%d\r\n", js->x_filtered, js->y_filtered);
-    printf("raw x=%d, y=%d\r\n", js->x_raw, js->y_raw);
-
     // Clear the matrix
     LedMatrix_Clear();
 

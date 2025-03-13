@@ -13,15 +13,20 @@ volatile uint32_t first_release_time = 0;
 volatile ButtonEvent event = IDLE;
 volatile uint8_t click_counter = 0;
 
+int test_Button = 0;
+
 /* Returns the ButtonState pointer for a given button name. */
 ButtonState* get_button_state(char* button_name) {
-    // Compare provided button name with known buttons.
-    if (strcmp(button_name, "BUTTON_A") == 0)
+    if (strcmp(button_name, "BUTTON_A") == 0) {
+        printf("Button A\n");
         return &button_a_state;
-    if (strcmp(button_name, "BUTTON_B") == 0)
+    }
+    else if (strcmp(button_name, "BUTTON_B") == 0) {
         return &button_b_state;
-    if (strcmp(button_name, "BUTTON_SW") == 0)
+    }
+    else if (strcmp(button_name, "BUTTON_SW") == 0) {
         return &button_sw_state;
+    }
     return NULL;
 }
 
@@ -29,9 +34,14 @@ ButtonState* get_button_state(char* button_name) {
 void init_button(char* button_name) {
     ButtonState* button_state = get_button_state(button_name);
     if (button_state != NULL) {
-        gpio_init(button_state->gpio);              // Initialize GPIO pin.
-        gpio_set_dir(button_state->gpio, GPIO_IN);  // Set the pin as input.
-        gpio_pull_up(button_state->gpio);           // Enable internal pull-up resistor.
+        // Inicializa o GPIO do botão
+        gpio_init(button_state->gpio);
+        gpio_set_dir(button_state->gpio, GPIO_IN);
+        gpio_pull_up(button_state->gpio);
+
+        // Define o estado inicial
+        button_state->last_state = gpio_get(button_state->gpio);
+        button_state->last_time = to_ms_since_boot(get_absolute_time());
     }
 }
 
@@ -163,13 +173,16 @@ void blink_led(uint gpio, uint32_t delay_ms, int times) {
 
 /* Example event handler that blinks different LEDs based on the button event. */
 void event_function(ButtonEvent event) {
-    if (event == SINGLE_CLICK) {
-        blink_led(12, 100, 5);  // Blink LED on GPIO 12 for a single click.
-    } else if (event == DOUBLE_CLICK) {
-        blink_led(11, 100, 5);  // Blink LED on GPIO 11 for a double click.
-    } else if (event == LONG_PRESS) {
-        blink_led(13, 100, 5);  // Blink LED on GPIO 13 for a long press.
-    }else{
-        return;
+
+    if(test_Button) {
+        if (event == SINGLE_CLICK) {
+            blink_led(12, 100, 5);  // Blink LED on GPIO 12 for a single click.
+        } else if (event == DOUBLE_CLICK) {
+            blink_led(11, 100, 5);  // Blink LED on GPIO 11 for a double click.
+        } else if (event == LONG_PRESS) {
+            blink_led(13, 100, 5);  // Blink LED on GPIO 13 for a long press.
+        }else{
+            return;
+        }
     }
 }

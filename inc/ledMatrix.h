@@ -96,7 +96,6 @@ void LedMatrix_Init(ws2812_config_t *ws2812_config);
 void LedMatrix_Fill(led_intensity_t red, led_intensity_t green, led_intensity_t blue);
 
 
-//// filepath: c:\Users\pc gamer\OneDrive\Documentos\ws_vscode\virtus\libraries\inc\ledMatrix.h
 /**
  * @brief Fills a quadrant of the LED matrix with a color.
  *

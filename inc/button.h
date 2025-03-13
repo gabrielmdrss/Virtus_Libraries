@@ -51,6 +51,8 @@
      bool long_press_detected;    ///< Flag indicating if a long press has been detected
  } ButtonState;
  
+ extern int test_Button;    // Test Variable
+
  /**
   * @brief Enumeration for different types of button events.
   *
