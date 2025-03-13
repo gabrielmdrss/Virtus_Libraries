@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(libraries 
         src/joystick.c
         src/ledMatrix.c
+        src/button.c
         src/main.c
         )
 
@@ -52,6 +53,7 @@ pico_enable_stdio_usb(libraries 1)
 target_link_libraries(libraries
         pico_stdlib
         hardware_pio
+        hardware_adc
         hardware_clocks
         )
 
@@ -59,13 +61,6 @@ target_link_libraries(libraries
 target_include_directories(libraries PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}
 )
-
-# Add any user requested libraries
-target_link_libraries(libraries 
-        hardware_adc
-        hardware_pio
-        hardware_clocks        
-        )
 
 pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/ws2818b.pio)
 

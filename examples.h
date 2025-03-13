@@ -17,11 +17,12 @@
 #include "pico/stdlib.h"
 #include "inc/joystick.h"
 #include "inc/ledMatrix.h"
+#include "inc/button.h" 
 
-#define ADC_UPPER_THRESHOLD_X 2900 	// Limite superior do ADC no eixo X direita
-#define ADC_LOWER_THRESHOLD_X 1300  // Limite inferior do ADC no eixo X esquerda
-#define ADC_UPPER_THRESHOLD_Y 2800 	// Limite superior do ADC no eixo Y cima
-#define ADC_LOWER_THRESHOLD_Y 1300 	// Limite inferior do ADC no eixo Y baixo
+#define ADC_UPPER_THRESHOLD_X 2900 	// Upper limit of the ADC on the X axis right
+#define ADC_LOWER_THRESHOLD_X 1300  // Lower limit of the ADC on the X axis left
+#define ADC_UPPER_THRESHOLD_Y 2800 	// Upper limit of the ADC on the Y axis up
+#define ADC_LOWER_THRESHOLD_Y 1300 	// Lower limit of the ADC on the Y axis down
 
 /***************************** Joystick Examples *****************************/
 
@@ -280,5 +281,29 @@ void Test_joystick_LedMatrixColorToggle(JoystickState *js) {
     LedMatrix_Update();
     sleep_ms(50);
 }
+
+/************************************ Logs ***********************************/
+
+void log_values(JoystickState *js) {
+
+    int x_MovingAvg = 0;
+    int y_MovingAvg = 0;
+    int x_DeadZone = 0;
+    int y_DeadZone = 0;
+
+    Joystick_Read(js);
+    js->x_filtered = Joystick_LowPassFilter(js->x_raw, js->x_filtered);
+    js->y_filtered = Joystick_LowPassFilter(js->y_raw, js->y_filtered);
+    x_MovingAvg = Joystick_MovingAverageFilter(js->x_raw, js->x_buffer, MOVING_AVG_WINDOW);
+    y_MovingAvg = Joystick_MovingAverageFilter(js->y_raw, js->y_buffer, MOVING_AVG_WINDOW);
+    x_DeadZone = Joystick_ApplyDeadZone(js->x_raw);
+    y_DeadZone = Joystick_ApplyDeadZone(js->y_raw);
+
+    printf("%d,%d,%d,%d\n", js->y_raw, js->y_filtered, y_MovingAvg, y_DeadZone);
+    //printf("%d,%d,%d,%d\n", js->x_raw, js->x_filtered, x_MovingAvg, x_DeadZone);
+
+    sleep_ms(1);
+}
+
 
 #endif /*EXAMPLES_H*/

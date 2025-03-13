@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "Buttons_Lib.h"
+#include "inc/button.h"
 #include <string.h>
 
 ButtonState button_a_state = {BUTTON_A, 0, true, 0, 0};
@@ -122,6 +122,7 @@ void process_button_state(void (*event_handler)(ButtonEvent)) {
          event = DOUBLE_CLICK;
          click_counter = 0;
         } else if(click_counter = 1 && current_time-last_press_time>DOUBLE_CLICK_TIME_MS){
+            printf("Single Click\n");
             event = SINGLE_CLICK;
             click_counter = 0;
         }
@@ -130,3 +131,23 @@ void process_button_state(void (*event_handler)(ButtonEvent)) {
         event = IDLE;         // Redefine o estado para IDLE após executar a ação
     }
 }
+
+// Função auxiliar para fazer o LED piscar
+void blink_led(uint gpio, uint32_t delay_ms, int times) {
+    for (int i = 0; i < times; i++) {
+        gpio_put(gpio, true);  // Liga o LED
+        sleep_ms(delay_ms);
+        gpio_put(gpio, false); // Desliga o LED
+        sleep_ms(delay_ms);
+    }
+}
+
+void event_function(ButtonEvent event){
+    if(event == SINGLE_CLICK){
+        blink_led(12, 100, 5);
+    }else if(event = DOUBLE_CLICK){
+        blink_led(11, 100, 5);
+    }else if(event == LONG_PRESS){
+        blink_led(13, 100, 5);
+    }
+}   

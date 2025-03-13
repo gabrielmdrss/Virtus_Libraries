@@ -45,4 +45,9 @@ void handle_button_IT(uint gpio, uint32_t events);
 void init_button_IT(uint gpio);
 void process_button_state(void (*event_handler)(ButtonEvent));
 
+// Função auxiliar para fazer o LED piscar
+void blink_led(uint gpio, uint32_t delay_ms, int times);
+
+void event_function(ButtonEvent event);
+
 #endif // BUTTONS_LIB_H

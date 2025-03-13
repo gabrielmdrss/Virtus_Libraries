@@ -10,16 +10,37 @@ int main()
     Joystick_Init(&joystick);       // Initializes the ADC for the Joystick
     LedMatrix_Init(&ws2812_config); // Initializes the LED Matrix
 
-    gpio_init(6);
-    gpio_set_dir(6, GPIO_IN);
-    gpio_pull_up(6);
+    // gpio_init(6);
+    // gpio_set_dir(6, GPIO_IN);
+    // gpio_pull_up(6);
 
+    LedMatrix_Clear();
+    LedMatrix_Update();
+
+    // // Definições para o LED RGB nos GPIOs corretos
+    // #define LED_RGB_RED 13
+    // #define LED_RGB_GREEN 11
+    // #define LED_RGB_BLUE 12
+
+    // // Inicialização dos pinos dos LEDs
+    // gpio_init(LED_RGB_RED);
+    // gpio_set_dir(LED_RGB_RED, GPIO_OUT);
+
+    // gpio_init(LED_RGB_GREEN);
+    // gpio_set_dir(LED_RGB_GREEN, GPIO_OUT);
+
+    // gpio_init(LED_RGB_BLUE);
+    // gpio_set_dir(LED_RGB_BLUE, GPIO_OUT);
+
+    // // Inicialização dos botões
+    // init_button_IT(5);
 
     while (1) {
 
     // --------------------- PushButton's Example --------------------- //
 
-        // Testes
+        // process_button_state(event_function);
+        // sleep_ms(10);
 
     // ---------------------- Joystick's Example ---------------------- //
         
@@ -38,6 +59,9 @@ int main()
         //Test_joystick_LedMatrixControl(&joystick);
         //Test_joystick_LedMatrixColorToggle(&joystick);
 
+    // ----------------------------- LOG ------------------------------ //
+
+        //log_values(&joystick);
     }
 
     return 0;
