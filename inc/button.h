@@ -25,7 +25,7 @@
  #define BUTTON_B 6
  
  /** @brief Debounce delay in milliseconds */
- #define DEBOUNCE 20
+ #define DEBOUNCE 50
  
  /** @brief Maximum allowed interval in milliseconds for a double click */
  #define DOUBLE_CLICK_TIME_MS 300

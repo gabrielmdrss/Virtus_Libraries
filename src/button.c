@@ -135,7 +135,7 @@ void process_button_state(void (*event_handler)(ButtonEvent)) {
     if (click_counter == 2 && (btwn_edge_time > DEBOUNCE) && (btwn_edge_time <= DOUBLE_CLICK_TIME_MS)) {
          event = DOUBLE_CLICK;
          click_counter = 0;
-    } else if (click_counter == 1 && current_time - last_press_time > DOUBLE_CLICK_TIME_MS) {
+    } else if (click_counter == 1 && current_time - last_release_time > DOUBLE_CLICK_TIME_MS) {
          // Consider it a single click if no second press occurs in time.
          event = SINGLE_CLICK;
          click_counter = 0;

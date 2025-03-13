@@ -27,13 +27,16 @@ int main()
     // // Inicialização dos pinos dos LEDs
     // gpio_init(LED_RGB_RED);
     // gpio_set_dir(LED_RGB_RED, GPIO_OUT);
+    // gpio_put(LED_RGB_RED, false);
 
     // gpio_init(LED_RGB_GREEN);
     // gpio_set_dir(LED_RGB_GREEN, GPIO_OUT);
+    // gpio_put(LED_RGB_GREEN, false);
 
     // gpio_init(LED_RGB_BLUE);
     // gpio_set_dir(LED_RGB_BLUE, GPIO_OUT);
-
+    // gpio_put(LED_RGB_BLUE, false);
+    
     // // Inicialização dos botões
     // init_button_IT(5);
 
