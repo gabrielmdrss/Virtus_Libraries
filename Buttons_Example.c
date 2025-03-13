@@ -22,7 +22,7 @@ void event_function(ButtonEvent event){
         blink_led(12, 100, 5);
     }else if(event = DOUBLE_CLICK){
         blink_led(11, 100, 5);
-    }else{
+    }else if(event == LONG_PRESS){
         blink_led(13, 100, 5);
     }
 }

@@ -116,7 +116,15 @@ void handle_button_IT(uint gpio, uint32_t events) {
 }
 
 void process_button_state(void (*event_handler)(ButtonEvent)) {
-    // Supondo que o evento foi identificado em outro ponto do código
+    uint32_t btwn_edge_time = last_press_time-first_release_time;
+    uint32_t current_time = to_ms_since_boot(get_absolute_time());
+    if(click_counter == 2 && (btwn_edge_time>DEBOUNCE) && (btwn_edge_time <= DOUBLE_CLICK_TIME_MS)){
+         event = DOUBLE_CLICK;
+         click_counter = 0;
+        } else if(click_counter = 1 && current_time-last_press_time>DOUBLE_CLICK_TIME_MS){
+            event = SINGLE_CLICK;
+            click_counter = 0;
+        }
     if (event != IDLE) {
         event_handler(event); // Chama a função de tratamento do evento
         event = IDLE;         // Redefine o estado para IDLE após executar a ação
