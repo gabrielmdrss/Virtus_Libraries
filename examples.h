@@ -202,7 +202,7 @@ void Test_joystick_LedMatrixControl(JoystickState *js) {
     }
 
     // Check if button is pressed (pull-up assumed, pressed reads 0)
-    if (!gpio_get(5)) {
+    if (event == SINGLE_CLICK) {
         ledOn[y][x] = true;  // Keep this LED lit permanently
         sleep_ms(200);       // Debounce
     }
@@ -263,7 +263,7 @@ void Test_joystick_LedMatrixColorToggle(JoystickState *js) {
     }
 
     // Check if button is pressed (pull-up assumed, pressed reads 0)
-    if (!gpio_get(6)) {
+    if (event == SINGLE_CLICK) {
         colorIndex = (colorIndex + 1) % 3;
         sleep_ms(200); // Debounce
     }

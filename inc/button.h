@@ -23,6 +23,9 @@
  
  /** @brief GPIO pin for button B */
  #define BUTTON_B 6
+
+ /** @brief GPIO pin for button SW */
+ #define BUTTON_SW 22
  
  /** @brief Debounce delay in milliseconds */
  #define DEBOUNCE 50
@@ -64,6 +67,7 @@
      LONG_PRESS
  } ButtonEvent;
  
+ extern volatile ButtonEvent event;
  /**
   * @brief Retrieves the button state structure based on the button name.
   *

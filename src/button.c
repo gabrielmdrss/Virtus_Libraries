@@ -5,6 +5,7 @@
 // Global button state variables.
 ButtonState button_a_state = {BUTTON_A, 0, true, 0, 0};
 ButtonState button_b_state = {BUTTON_B, 0, true, 0, 0};
+ButtonState button_sw_state = {BUTTON_SW, 0, true, 0, 0};
 
 volatile uint32_t last_press_time = 0;
 volatile uint32_t last_release_time = 0;
@@ -19,6 +20,8 @@ ButtonState* get_button_state(char* button_name) {
         return &button_a_state;
     if (strcmp(button_name, "BUTTON_B") == 0)
         return &button_b_state;
+    if (strcmp(button_name, "BUTTON_SW") == 0)
+        return &button_sw_state;
     return NULL;
 }
 
@@ -111,7 +114,8 @@ void handle_button_IT(uint gpio, uint32_t events) {
         if (last_press_time - last_release_time <= DEBOUNCE) {
             return; // Ignore if within debounce period.
         }
-    } else if (events & GPIO_IRQ_EDGE_RISE) { // Rising edge: button release.
+    } else if (events & GPIO_IRQ_EDGE_RISE) {
+        current_time = to_ms_since_boot(get_absolute_time());// Rising edge: button release.
         uint32_t press_duration = current_time - last_press_time; // Calculate press duration.
         if (press_duration <= DEBOUNCE) {
             return; // Ignore if press too short.
@@ -144,7 +148,6 @@ void process_button_state(void (*event_handler)(ButtonEvent)) {
     // If an event is set, call the event handler and reset the event.
     if (event != IDLE) {
         event_handler(event);
-        event = IDLE;
     }
 }
 
@@ -166,5 +169,7 @@ void event_function(ButtonEvent event) {
         blink_led(11, 100, 5);  // Blink LED on GPIO 11 for a double click.
     } else if (event == LONG_PRESS) {
         blink_led(13, 100, 5);  // Blink LED on GPIO 13 for a long press.
+    }else{
+        return;
     }
 }
