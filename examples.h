@@ -18,6 +18,11 @@
 #include "inc/joystick.h"
 #include "inc/ledMatrix.h"
 
+#define ADC_UPPER_THRESHOLD_X 2900 	// Limite superior do ADC no eixo X direita
+#define ADC_LOWER_THRESHOLD_X 1300  // Limite inferior do ADC no eixo X esquerda
+#define ADC_UPPER_THRESHOLD_Y 2800 	// Limite superior do ADC no eixo Y cima
+#define ADC_LOWER_THRESHOLD_Y 1300 	// Limite inferior do ADC no eixo Y baixo
+
 /***************************** Joystick Examples *****************************/
 
 /* Tests the joystick reading and applies all filters. */
@@ -164,6 +169,116 @@ void Test_LedMatrix_Spiral(void) {
     sleep_ms(200);
 }
 
+
 /*************************** Push-Buttons Examples ***************************/
+
+/*********************** Tests integrating all the libs **********************/
+
+
+/* Moves an LED around the matrix based on joystick input. */
+void Test_joystick_LedMatrixControl(JoystickState *js) {
+    static int x = 2;
+    static int y = 2;
+    static bool ledOn[5][5] = {false};  // Tracks which LEDs remain lit
+
+    // Read and filter joystick values
+    Joystick_Read(js);
+    js->x_filtered = Joystick_LowPassFilter(js->x_raw, js->x_filtered);
+    js->y_filtered = Joystick_LowPassFilter(js->y_raw, js->y_filtered);
+
+    // Adjust X position
+    if (js->x_filtered > ADC_UPPER_THRESHOLD_X && x < 4) {
+        x++;
+    } else if (js->x_filtered < ADC_LOWER_THRESHOLD_X && x > 0) {
+        x--;
+    }
+
+    // Adjust Y position
+    if (js->y_filtered > ADC_UPPER_THRESHOLD_Y && y < 4) {
+        y++;
+    } else if (js->y_filtered < ADC_LOWER_THRESHOLD_Y && y > 0) {
+        y--;
+    }
+
+    // Check if button is pressed (pull-up assumed, pressed reads 0)
+    if (!gpio_get(5)) {
+        ledOn[y][x] = true;  // Keep this LED lit permanently
+        sleep_ms(200);       // Debounce
+    }
+
+    // Print current info
+    printf("x=%d, y=%d\r\n", x, y);
+    printf("filtered x=%d, y=%d\r\n", js->x_filtered, js->y_filtered);
+    printf("raw x=%d, y=%d\r\n", js->x_raw, js->y_raw);
+
+    // Clear the matrix
+    LedMatrix_Clear();
+
+    // Turn on any previously lit LEDs
+    for (int row = 0; row < 5; row++) {
+        for (int col = 0; col < 5; col++) {
+            if (ledOn[row][col]) {
+                LedMatrix_SetPixel(col, row, LED_WEAK, LED_OFF, LED_OFF);
+            }
+        }
+    }
+
+    // Light the current position
+    LedMatrix_SetPixel(x, y, LED_WEAK, LED_OFF, LED_OFF);
+
+    // Update the LEDs and wait
+    LedMatrix_Update();
+    sleep_ms(60);
+}
+
+/* Move um LED com o joystick. Quando o botão é pressionado, muda a cor do LED. */
+void Test_joystick_LedMatrixColorToggle(JoystickState *js) {
+    static int x = 2, y = 2;
+    static uint8_t colorIndex = 0;
+    // Lista de cores de exemplo
+    const led_intensity_t colors[3][3] = {
+        {LED_WEAK, LED_OFF, LED_OFF   },    // Red
+        {LED_OFF, LED_WEAK, LED_OFF   },    // Green
+        {LED_OFF, LED_OFF, LED_WEAK}        // Blue
+    };
+
+    // Read and filter joystick values
+    Joystick_Read(js);
+    js->x_filtered = Joystick_LowPassFilter(js->x_raw, js->x_filtered);
+    js->y_filtered = Joystick_LowPassFilter(js->y_raw, js->y_filtered);
+
+     // Adjust X position
+     if (js->x_filtered > ADC_UPPER_THRESHOLD_X && x < 4) {
+        x++;
+    } else if (js->x_filtered < ADC_LOWER_THRESHOLD_X && x > 0) {
+        x--;
+    }
+
+    // Adjust Y position
+    if (js->y_filtered > ADC_UPPER_THRESHOLD_Y && y < 4) {
+        y++;
+    } else if (js->y_filtered < ADC_LOWER_THRESHOLD_Y && y > 0) {
+        y--;
+    }
+
+    // Check if button is pressed (pull-up assumed, pressed reads 0)
+    if (!gpio_get(6)) {
+        colorIndex = (colorIndex + 1) % 3;
+        sleep_ms(200); // Debounce
+    }
+
+    // Clear the matrix and set the new pixel
+    LedMatrix_Clear();
+    LedMatrix_SetPixel(
+        x, y,
+        colors[colorIndex][0],
+        colors[colorIndex][1],
+        colors[colorIndex][2]
+    );
+
+    // Update the LEDs and wait
+    LedMatrix_Update();
+    sleep_ms(50);
+}
 
 #endif /*EXAMPLES_H*/

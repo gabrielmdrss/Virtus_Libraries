@@ -2,20 +2,24 @@
 #include "hardware/adc.h"
 
 /* Initializes the joystick and configures the ADC channels. */
-void Joystick_Init(void) {
+void Joystick_Init(JoystickState *js) {
     adc_init();
     adc_gpio_init(26); // ADC pin for X-axis
     adc_gpio_init(27); // ADC pin for Y-axis
+
+    Joystick_Read(js);          // Read the initial values
+    js->x_filtered = js->x_raw; // Initialize filtered values
+    js->y_filtered = js->y_raw; // Initialize filtered values
 }
 
 /* Reads the raw joystick values from ADC. */
 void Joystick_Read(JoystickState *js) {
-    // Select input channel 0 (X)
-    adc_select_input(0);
+    // Select input channel 1 (X)
+    adc_select_input(1);
     js->x_raw = adc_read();
 
-    // Select input channel 1 (Y)
-    adc_select_input(1);
+    // Select input channel 0 (Y)
+    adc_select_input(0);
     js->y_raw = adc_read();
 }
 
@@ -82,8 +86,8 @@ void Joystick_ApplyFilters(JoystickState *js) {
     js->y_filtered = Joystick_MovingAverageFilter(js->y_filtered, js->y_buffer, MOVING_AVG_WINDOW);
 
     // Low-pass
-    js->x_filtered = Joystick_LowPassFilter(js->x_filtered, js->prev_x);
-    js->y_filtered = Joystick_LowPassFilter(js->y_filtered, js->prev_y);
+    js->x_filtered = Joystick_LowPassFilter(js->x_raw, js->x_filtered);
+    js->y_filtered = Joystick_LowPassFilter(js->y_raw, js->y_filtered);
 
     // Update previous values
     js->prev_x = js->x_filtered;

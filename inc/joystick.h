@@ -37,7 +37,7 @@ int16_t prev_y;                        ///< Previous filtered Y-axis value
 /**
  * @brief Initializes the joystick module.
  */
-void Joystick_Init(void);
+void Joystick_Init(JoystickState *js);
 
 /**
  * @brief Reads raw joystick values into the given state structure.
