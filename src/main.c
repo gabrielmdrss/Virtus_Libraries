@@ -10,12 +10,14 @@ int main()
     Joystick_Init(&joystick);       // Initializes the ADC for the Joystick
     LedMatrix_Init(&ws2812_config); // Initializes the LED Matrix
 
+    LedMatrix_Clear();
+    LedMatrix_Update();
+
+
+ /*  Inicialização do botão para teste  */
     // gpio_init(6);
     // gpio_set_dir(6, GPIO_IN);
     // gpio_pull_up(6);
-
-    LedMatrix_Clear();
-    LedMatrix_Update();
 
     // // Definições para o LED RGB nos GPIOs corretos
     // #define LED_RGB_RED 13
@@ -62,6 +64,7 @@ int main()
     // ----------------------------- LOG ------------------------------ //
 
         //log_values(&joystick);
+
     }
 
     return 0;
